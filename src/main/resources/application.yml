@@ -2,22 +2,6 @@ spring:
   cloud:
     function:
        definition: processFile;parseProduct
-#    stream:
-#      function:
-#        bindings:
-#          processFile-in-0: processFile-in
-#          processFile-out-0: processFile-out
-#          parseProduct-in-0: parseProduct-in
-#          parseProduct-out-0: parseProduct-out
-#      bindings:
-#        processFile-in:
-#          destination: incomingFilesQueue
-#        processFile-out:
-#          destination: outcomingFilesQueue
-#        parseProduct-in:
-#          destination: incomingProductsQueue
-#        parseProduct-out:
-#          destination: outcomingProductQueue
 logging:
   level:
     root: info
