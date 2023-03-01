@@ -22,15 +22,25 @@ import java.io.IOException;
 @Import(TestChannelBinderConfiguration.class)
 class ScsFunctionsApplicationTests {
 
-  public static final String BINDING_NAME_PROCESS_FILE_IN = "processFile-in-0";
-  public static final String BINDING_NAME_PARSE_PRODUCT_FRA_IN = "parseProductFRA-in-0";
-  public static final String BINDING_NAME_PARSE_PRODUCT_FRA_OUT = "parseProductFRA-out-0";
-  public static final String BINDING_NAME_PARSE_PRODUCT_USA_IN = "parseProductUSA-in-0";
-  public static final String BINDING_NAME_PARSE_PRODUCT_USA_OUT = "parseProductUSA-out-0";
-  public static final String BINDING_NAME_PARSE_PRODUCT_IN = "parseProduct-in-0";
-  public static final String BINDING_NAME_PARSE_PRODUCT_OUT = "parseProduct-out-0";
-  public static final String BINDING_NAME_PARSE_ORDER_OUT = "parseOrder-out-0";
-  public static final String BINDING_NAME_PARSE_ORDER_IN = "parseOrder-in-0";
+//  public static final String BINDING_NAME_PROCESS_FILE_IN = "processFile-in-0";
+//  public static final String BINDING_NAME_PARSE_PRODUCT_FRA_IN = ScsFunctionsApplication.BINDING_NAME_PARSE_PRODUCT_FRA_IN;
+//  public static final String BINDING_NAME_PARSE_PRODUCT_FRA_OUT = "parseProductFRA-out-0";
+//  public static final String BINDING_NAME_PARSE_PRODUCT_USA_IN = ScsFunctionsApplication.BINDING_NAME_PARSE_PRODUCT_USA_IN;
+//  public static final String BINDING_NAME_PARSE_PRODUCT_USA_OUT = "parseProductUSA-out-0";
+//  public static final String BINDING_NAME_PARSE_PRODUCT_IN = "parseProduct-in-0";
+//  public static final String BINDING_NAME_PARSE_PRODUCT_OUT = "parseProduct-out-0";
+//  public static final String BINDING_NAME_PARSE_ORDER_OUT = "parseOrder-out-0";
+//  public static final String BINDING_NAME_PARSE_ORDER_IN = "parseOrder-in-0";
+
+  public static final String BINDING_NAME_PROCESS_FILE_IN = "queue.processFile-in.messages";
+  public static final String BINDING_NAME_PARSE_PRODUCT_FRA_IN = ScsFunctionsApplication.BINDING_NAME_PARSE_PRODUCT_FRA_IN;
+  public static final String BINDING_NAME_PARSE_PRODUCT_FRA_OUT = "queue.productFRA-out.messages";
+  public static final String BINDING_NAME_PARSE_PRODUCT_USA_IN = ScsFunctionsApplication.BINDING_NAME_PARSE_PRODUCT_USA_IN;
+  public static final String BINDING_NAME_PARSE_PRODUCT_USA_OUT = "queue.parseProductUSA-out.messages";
+  public static final String BINDING_NAME_PARSE_PRODUCT_IN = "queue.parseProduct-in.messages";
+  public static final String BINDING_NAME_PARSE_PRODUCT_OUT = "queue.parseProduct-out.messages";
+  public static final String BINDING_NAME_PARSE_ORDER_OUT = "queue.parseOrder-out.messages";
+  public static final String BINDING_NAME_PARSE_ORDER_IN = "queue.parseOrder-in.messages";
 
   @Autowired
   private InputDestination inputDestination;

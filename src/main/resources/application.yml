@@ -2,6 +2,28 @@ spring:
   cloud:
     function:
        definition: processFile;parseProduct;parseOrder;parseProductFRA;parseProductUSA
+    stream:
+      bindings:
+        parseProductFRA-in-0:
+          destination: queue.productFRA-in.messages
+        parseProductFRA-out-0:
+          destination: queue.productFRA-out.messages
+        processFile-in-0:
+          destination: queue.processFile-in.messages
+        processFile-out-0:
+          destination: queue.processFile-out.messages
+        parseOrder-in-0:
+          destination: queue.parseOrder-in.messages
+        parseOrder-out-0:
+          destination: queue.parseOrder-out.messages
+        parseProduct-in-0:
+          destination: queue.parseProduct-in.messages
+        parseProduct-out-0:
+          destination: queue.parseProduct-out.messages
+        parseProductUSA-in-0:
+          destination: queue.parseProductUSA-in.messages
+        parseProductUSA-out-0:
+          destination: queue.parseProductUSA-out.messages
 logging:
   level:
     root: info

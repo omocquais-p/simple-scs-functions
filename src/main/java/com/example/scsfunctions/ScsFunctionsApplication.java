@@ -16,6 +16,9 @@ import java.util.function.Function;
 @Slf4j
 public class ScsFunctionsApplication {
 
+  public static final String BINDING_NAME_PARSE_PRODUCT_FRA_IN = "queue.productFRA-in.messages";
+  public static final String BINDING_NAME_PARSE_PRODUCT_USA_IN = "queue.parseProductUSA-in.messages";
+
   public static void main(String[] args) {
     SpringApplication.run(ScsFunctionsApplication.class, args);
   }
@@ -27,11 +30,11 @@ public class ScsFunctionsApplication {
       Product product = customerService.process(customer);
       if (customer.getNationality().equals(Nationality.FRA)) {
         return MessageBuilder.withPayload(product)
-                .setHeader("spring.cloud.stream.sendto.destination", "parseProductFRA-in-0").build();
+                .setHeader("spring.cloud.stream.sendto.destination", BINDING_NAME_PARSE_PRODUCT_FRA_IN).build();
       }
       log.info("---- End processFile - customer = {}", customer);
       return MessageBuilder.withPayload(product)
-              .setHeader("spring.cloud.stream.sendto.destination", "parseProductUSA-in-0").build();
+              .setHeader("spring.cloud.stream.sendto.destination", BINDING_NAME_PARSE_PRODUCT_USA_IN).build();
     };
   }
 
