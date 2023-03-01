@@ -22,6 +22,16 @@ import java.io.IOException;
 @Import(TestChannelBinderConfiguration.class)
 class ScsFunctionsApplicationTests {
 
+  public static final String BINDING_NAME_PROCESS_FILE_IN = "processFile-in-0";
+  public static final String BINDING_NAME_PARSE_PRODUCT_FRA_IN = "parseProductFRA-in-0";
+  public static final String BINDING_NAME_PARSE_PRODUCT_FRA_OUT = "parseProductFRA-out-0";
+  public static final String BINDING_NAME_PARSE_PRODUCT_USA_IN = "parseProductUSA-in-0";
+  public static final String BINDING_NAME_PARSE_PRODUCT_USA_OUT = "parseProductUSA-out-0";
+  public static final String BINDING_NAME_PARSE_PRODUCT_IN = "parseProduct-in-0";
+  public static final String BINDING_NAME_PARSE_PRODUCT_OUT = "parseProduct-out-0";
+  public static final String BINDING_NAME_PARSE_ORDER_OUT = "parseOrder-out-0";
+  public static final String BINDING_NAME_PARSE_ORDER_IN = "parseOrder-in-0";
+
   @Autowired
   private InputDestination inputDestination;
 
@@ -40,9 +50,9 @@ class ScsFunctionsApplicationTests {
 
     Message<Customer> message = MessageBuilder.withPayload(customer).build();
 
-    inputDestination.send(message, "processFile-in-0");
+    inputDestination.send(message, BINDING_NAME_PROCESS_FILE_IN);
 
-    Product product = new ObjectMapper().readValue(outputDestination.receive(100, "parseProductFRA-out-0").getPayload(), Product.class);
+    Product product = new ObjectMapper().readValue(outputDestination.receive(100, ScsFunctionsApplicationTests.BINDING_NAME_PARSE_PRODUCT_FRA_OUT).getPayload(), Product.class);
     Assertions.assertNotNull(product);
     Assertions.assertEquals(customer.getName(), product.getName());
   }
@@ -58,9 +68,9 @@ class ScsFunctionsApplicationTests {
 
     Message<Customer> message = MessageBuilder.withPayload(customer).build();
 
-    inputDestination.send(message, "processFile-in-0");
+    inputDestination.send(message, BINDING_NAME_PROCESS_FILE_IN);
 
-    Product product = new ObjectMapper().readValue(outputDestination.receive(100, "parseProductUSA-out-0").getPayload(), Product.class);
+    Product product = new ObjectMapper().readValue(outputDestination.receive(100, BINDING_NAME_PARSE_PRODUCT_USA_OUT).getPayload(), Product.class);
     Assertions.assertNotNull(product);
     Assertions.assertEquals(customer.getName(), product.getName());
   }
@@ -75,9 +85,9 @@ class ScsFunctionsApplicationTests {
 
     Message<Product> message = MessageBuilder.withPayload(product).build();
 
-    inputDestination.send(message, "parseProduct-in-0");
+    inputDestination.send(message, BINDING_NAME_PARSE_PRODUCT_IN);
 
-    Order order = new ObjectMapper().readValue(outputDestination.receive(100, "parseProduct-out-0").getPayload(), Order.class);
+    Order order = new ObjectMapper().readValue(outputDestination.receive(100, BINDING_NAME_PARSE_PRODUCT_OUT).getPayload(), Order.class);
     Assertions.assertNotNull(order);
     Assertions.assertEquals(product.getName(), order.getName());
   }
@@ -92,9 +102,9 @@ class ScsFunctionsApplicationTests {
 
     Message<Product> message = MessageBuilder.withPayload(product).build();
 
-    inputDestination.send(message, "parseProductFRA-in-0");
+    inputDestination.send(message, BINDING_NAME_PARSE_PRODUCT_FRA_IN);
 
-    Order order = new ObjectMapper().readValue(outputDestination.receive(100, "parseProductFRA-out-0").getPayload(), Order.class);
+    Order order = new ObjectMapper().readValue(outputDestination.receive(100, BINDING_NAME_PARSE_PRODUCT_FRA_OUT).getPayload(), Order.class);
     Assertions.assertNotNull(order);
     Assertions.assertEquals(product.getName(), order.getName());
   }
@@ -108,9 +118,9 @@ class ScsFunctionsApplicationTests {
 
     Message<Product> message = MessageBuilder.withPayload(product).build();
 
-    inputDestination.send(message, "parseProductUSA-in-0");
+    inputDestination.send(message, BINDING_NAME_PARSE_PRODUCT_USA_IN);
 
-    Order order = new ObjectMapper().readValue(outputDestination.receive(100, "parseProductUSA-out-0").getPayload(), Order.class);
+    Order order = new ObjectMapper().readValue(outputDestination.receive(100, BINDING_NAME_PARSE_PRODUCT_USA_OUT).getPayload(), Order.class);
     Assertions.assertNotNull(order);
     Assertions.assertEquals(product.getName(), order.getName());
   }
@@ -122,9 +132,9 @@ class ScsFunctionsApplicationTests {
     order.setName("order1");
 
     Message<Order> message = MessageBuilder.withPayload(order).build();
-    inputDestination.send(message, "parseOrder-in-0");
+    inputDestination.send(message, BINDING_NAME_PARSE_ORDER_IN);
 
-    Item item = new ObjectMapper().readValue(outputDestination.receive(100, "parseOrder-out-0").getPayload(), Item.class);
+    Item item = new ObjectMapper().readValue(outputDestination.receive(100, BINDING_NAME_PARSE_ORDER_OUT).getPayload(), Item.class);
     Assertions.assertNotNull(item);
     Assertions.assertEquals(item.getName(), order.getName());
     Assertions.assertEquals(item.getPrice(), 100);
