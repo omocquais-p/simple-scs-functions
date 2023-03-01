@@ -6,4 +6,5 @@ import lombok.Data;
 public class Customer {
   String name;
   String firstName;
+  Nationality nationality;
 }
