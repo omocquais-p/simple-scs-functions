@@ -1,6 +1,7 @@
 package com.example.scsfunctions;
 
 import com.example.scsfunctions.dto.Customer;
+import com.example.scsfunctions.dto.Item;
 import com.example.scsfunctions.dto.Order;
 import com.example.scsfunctions.dto.Product;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,22 +37,17 @@ class ScsFunctionsApplicationTests {
     customer.setFirstName("Olivier");
     customer.setName("Smith");
 
-    //Message<Customer> message = MessageBuilder.withPayload(customer).setHeader("spring.cloud.function.definition", "processFile").build();
     Message<Customer> message = MessageBuilder.withPayload(customer).build();
 
     inputDestination.send(message, "processFile-in-0");
 
-    Product product = new ObjectMapper().readValue(outputDestination.receive().getPayload(), Product.class);
+    Product product = new ObjectMapper().readValue(outputDestination.receive(100, "processFile-out-0").getPayload(), Product.class);
     Assertions.assertNotNull(product);
     Assertions.assertEquals(customer.getName(), product.getName());
   }
 
   @Test
   void parseProduct() throws IOException {
-
-    Customer customer = new Customer();
-    customer.setFirstName("Olivier");
-    customer.setName("Smith");
 
     Product product = new Product();
     product.setName("Bob");
@@ -61,11 +57,24 @@ class ScsFunctionsApplicationTests {
 
     inputDestination.send(message, "parseProduct-in-0");
 
-    Order order = new ObjectMapper().readValue(outputDestination.receive().getPayload(), Order.class);
+    Order order = new ObjectMapper().readValue(outputDestination.receive(100, "parseProduct-out-0").getPayload(), Order.class);
     Assertions.assertNotNull(order);
-    Assertions.assertNotNull(product.getName(), order.getName());
+    Assertions.assertEquals(product.getName(), order.getName());
+  }
 
+  @Test
+  void parseOrder() throws IOException {
 
+    Order order = new Order();
+    order.setName("order1");
+
+    Message<Order> message = MessageBuilder.withPayload(order).build();
+    inputDestination.send(message, "parseOrder-in-0");
+
+    Item item = new ObjectMapper().readValue(outputDestination.receive(100, "parseOrder-out-0").getPayload(), Item.class);
+    Assertions.assertNotNull(item);
+    Assertions.assertEquals(item.getName(), order.getName());
+    Assertions.assertEquals(item.getPrice(), 100);
   }
 
 

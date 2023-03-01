@@ -1,7 +1,7 @@
 spring:
   cloud:
     function:
-       definition: processFile;parseProduct
+       definition: processFile;parseProduct;parseOrder
 logging:
   level:
     root: info
