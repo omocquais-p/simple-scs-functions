@@ -1,13 +1,16 @@
 package com.example.scsfunctions;
 
 import com.example.scsfunctions.dto.*;
+import com.example.scsfunctions.services.ItemService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.stream.binder.test.InputDestination;
 import org.springframework.cloud.stream.binder.test.OutputDestination;
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
@@ -17,30 +20,18 @@ import org.springframework.messaging.support.MessageBuilder;
 
 import java.io.IOException;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.verify;
+
 @Slf4j
 @SpringBootTest
 @Import(TestChannelBinderConfiguration.class)
 class ScsFunctionsApplicationTests {
 
-//  public static final String BINDING_NAME_PROCESS_FILE_IN = "processFile-in-0";
-//  public static final String BINDING_NAME_PARSE_PRODUCT_FRA_IN = ScsFunctionsApplication.BINDING_NAME_PARSE_PRODUCT_FRA_IN;
-//  public static final String BINDING_NAME_PARSE_PRODUCT_FRA_OUT = "parseProductFRA-out-0";
-//  public static final String BINDING_NAME_PARSE_PRODUCT_USA_IN = ScsFunctionsApplication.BINDING_NAME_PARSE_PRODUCT_USA_IN;
-//  public static final String BINDING_NAME_PARSE_PRODUCT_USA_OUT = "parseProductUSA-out-0";
-//  public static final String BINDING_NAME_PARSE_PRODUCT_IN = "parseProduct-in-0";
-//  public static final String BINDING_NAME_PARSE_PRODUCT_OUT = "parseProduct-out-0";
-//  public static final String BINDING_NAME_PARSE_ORDER_OUT = "parseOrder-out-0";
-//  public static final String BINDING_NAME_PARSE_ORDER_IN = "parseOrder-in-0";
-
-  public static final String BINDING_NAME_PROCESS_FILE_IN = "queue.processFile-in.messages";
-  public static final String BINDING_NAME_PARSE_PRODUCT_FRA_IN = ScsFunctionsApplication.BINDING_NAME_PARSE_PRODUCT_FRA_IN;
+  public static final String BINDING_NAME_PROCESS_CUSTOMER_IN = "queue.processCustomer-in.messages";
   public static final String BINDING_NAME_PARSE_PRODUCT_FRA_OUT = "queue.productFRA-out.messages";
-  public static final String BINDING_NAME_PARSE_PRODUCT_USA_IN = ScsFunctionsApplication.BINDING_NAME_PARSE_PRODUCT_USA_IN;
   public static final String BINDING_NAME_PARSE_PRODUCT_USA_OUT = "queue.parseProductUSA-out.messages";
-  public static final String BINDING_NAME_PARSE_PRODUCT_IN = "queue.parseProduct-in.messages";
-  public static final String BINDING_NAME_PARSE_PRODUCT_OUT = "queue.parseProduct-out.messages";
-  public static final String BINDING_NAME_PARSE_ORDER_OUT = "queue.parseOrder-out.messages";
-  public static final String BINDING_NAME_PARSE_ORDER_IN = "queue.parseOrder-in.messages";
 
   @Autowired
   private InputDestination inputDestination;
@@ -48,19 +39,19 @@ class ScsFunctionsApplicationTests {
   @Autowired
   private OutputDestination outputDestination;
 
+  @MockBean
+  ItemService itemService;
 
-  @DisplayName("Given a customer with a french nationality, it must be processed by the parseProductFRA function")
+  @DisplayName("Given a customer with a french nationality, it must be processed by the French Product Processor")
   @Test
-  void processFileFRA() throws IOException {
+  void processFrenchCustomer() throws IOException {
 
     Customer customer = new Customer();
     customer.setFirstName("Olivier");
     customer.setName("Dupond");
     customer.setNationality(Nationality.FRA);
 
-    Message<Customer> message = MessageBuilder.withPayload(customer).build();
-
-    inputDestination.send(message, BINDING_NAME_PROCESS_FILE_IN);
+    inputDestination.send(MessageBuilder.withPayload(customer).build(), BINDING_NAME_PROCESS_CUSTOMER_IN);
 
     Product product = new ObjectMapper().readValue(outputDestination.receive(100, ScsFunctionsApplicationTests.BINDING_NAME_PARSE_PRODUCT_FRA_OUT).getPayload(), Product.class);
     Assertions.assertNotNull(product);
@@ -69,16 +60,14 @@ class ScsFunctionsApplicationTests {
 
   @DisplayName("Given a customer with an american nationality, it must be processed by the parseProductUSA function")
   @Test
-  void processFileUSA() throws IOException {
+  void processAmericanCustomer() throws IOException {
 
     Customer customer = new Customer();
     customer.setFirstName("Olivier");
     customer.setName("Smith");
     customer.setNationality(Nationality.USA);
 
-    Message<Customer> message = MessageBuilder.withPayload(customer).build();
-
-    inputDestination.send(message, BINDING_NAME_PROCESS_FILE_IN);
+    inputDestination.send(MessageBuilder.withPayload(customer).build(), BINDING_NAME_PROCESS_CUSTOMER_IN);
 
     Product product = new ObjectMapper().readValue(outputDestination.receive(100, BINDING_NAME_PARSE_PRODUCT_USA_OUT).getPayload(), Product.class);
     Assertions.assertNotNull(product);
@@ -95,13 +84,12 @@ class ScsFunctionsApplicationTests {
 
     Message<Product> message = MessageBuilder.withPayload(product).build();
 
-    inputDestination.send(message, BINDING_NAME_PARSE_PRODUCT_IN);
+    inputDestination.send(message, "queue.parseProduct-in.messages");
 
-    Order order = new ObjectMapper().readValue(outputDestination.receive(100, BINDING_NAME_PARSE_PRODUCT_OUT).getPayload(), Order.class);
+    Order order = new ObjectMapper().readValue(outputDestination.receive(100, "queue.parseProduct-out.messages").getPayload(), Order.class);
     Assertions.assertNotNull(order);
     Assertions.assertEquals(product.getName(), order.getName());
   }
-
 
   @Test
   void parseProductFRA() throws IOException {
@@ -112,7 +100,7 @@ class ScsFunctionsApplicationTests {
 
     Message<Product> message = MessageBuilder.withPayload(product).build();
 
-    inputDestination.send(message, BINDING_NAME_PARSE_PRODUCT_FRA_IN);
+    inputDestination.send(message, ScsFunctionsApplication.BINDING_NAME_PARSE_PRODUCT_FRA_IN);
 
     Order order = new ObjectMapper().readValue(outputDestination.receive(100, BINDING_NAME_PARSE_PRODUCT_FRA_OUT).getPayload(), Order.class);
     Assertions.assertNotNull(order);
@@ -128,7 +116,7 @@ class ScsFunctionsApplicationTests {
 
     Message<Product> message = MessageBuilder.withPayload(product).build();
 
-    inputDestination.send(message, BINDING_NAME_PARSE_PRODUCT_USA_IN);
+    inputDestination.send(message, ScsFunctionsApplication.BINDING_NAME_PARSE_PRODUCT_USA_IN);
 
     Order order = new ObjectMapper().readValue(outputDestination.receive(100, BINDING_NAME_PARSE_PRODUCT_USA_OUT).getPayload(), Order.class);
     Assertions.assertNotNull(order);
@@ -142,11 +130,25 @@ class ScsFunctionsApplicationTests {
     order.setName("order1");
 
     Message<Order> message = MessageBuilder.withPayload(order).build();
-    inputDestination.send(message, BINDING_NAME_PARSE_ORDER_IN);
+    inputDestination.send(message, "queue.parseOrder-in.messages");
 
-    Item item = new ObjectMapper().readValue(outputDestination.receive(100, BINDING_NAME_PARSE_ORDER_OUT).getPayload(), Item.class);
+    Item item = new ObjectMapper().readValue(outputDestination.receive(100, "queue.parseOrder-out.messages").getPayload(), Item.class);
     Assertions.assertNotNull(item);
     Assertions.assertEquals(item.getName(), order.getName());
     Assertions.assertEquals(item.getPrice(), 100);
   }
+
+  @Test
+  void parseItem() {
+    doNothing().when(itemService).processItem(Mockito.any(Item.class));
+
+    Item item = new Item();
+    item.setPrice(100);
+    item.setName("item1");
+
+    Message<Item> message = MessageBuilder.withPayload(item).build();
+    inputDestination.send(message, "queue.parseItem-in.messages");
+    verify(itemService).processItem(any(Item.class));
+  }
+
 }

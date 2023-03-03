@@ -1,0 +1,33 @@
+spring:
+  cloud:
+    function:
+       definition: parseItem;processCustomer;parseProduct;parseOrder;parseProductFRA;parseProductUSA
+    stream:
+      bindings:
+        processCustomer-in-0:
+          destination: queue.processCustomer-in.messages
+        processCustomer-out-0:
+          destination: queue.processCustomer-out.messages
+        parseProduct-in-0:
+          destination: queue.parseProduct-in.messages
+        parseProduct-out-0:
+          destination: queue.parseProduct-out.messages
+        parseOrder-in-0:
+          destination: queue.parseOrder-in.messages
+        parseOrder-out-0:
+          destination: queue.parseOrder-out.messages
+        parseProductFRA-in-0:
+          destination: queue.productFRA-in.messages
+        parseProductFRA-out-0:
+          destination: queue.productFRA-out.messages
+        parseProductUSA-in-0:
+          destination: queue.parseProductUSA-in.messages
+        parseProductUSA-out-0:
+          destination: queue.parseProductUSA-out.messages
+        sendCustomerData-out-0:
+          destination: queue.processCustomer-TEST.messages
+        parseItem-in-0:
+          destination: queue.parseItem-in.messages
+logging:
+  level:
+    root: info

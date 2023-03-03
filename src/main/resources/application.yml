@@ -1,29 +1,33 @@
 spring:
   cloud:
     function:
-       definition: processFile;parseProduct;parseOrder;parseProductFRA;parseProductUSA
+       definition: parseItem;sendCustomerData;processCustomer;parseProduct;parseOrder;parseProductFRA;parseProductUSA
     stream:
       bindings:
+        processCustomer-in-0:
+          destination: queue.customers.messages
+        processCustomer-out-0:
+          destination: queue.products.messages
+        parseProduct-in-0:
+          destination: queue.products.messages
+        parseProduct-out-0:
+          destination: queue.orders.messages
+        parseOrder-in-0:
+          destination: queue.orders.messages
+        parseOrder-out-0:
+          destination: queue.items.messages
         parseProductFRA-in-0:
           destination: queue.productFRA-in.messages
         parseProductFRA-out-0:
-          destination: queue.productFRA-out.messages
-        processFile-in-0:
-          destination: queue.processFile-in.messages
-        processFile-out-0:
-          destination: queue.processFile-out.messages
-        parseOrder-in-0:
-          destination: queue.parseOrder-in.messages
-        parseOrder-out-0:
-          destination: queue.parseOrder-out.messages
-        parseProduct-in-0:
-          destination: queue.parseProduct-in.messages
-        parseProduct-out-0:
-          destination: queue.parseProduct-out.messages
+          destination: queue.orders.messages
         parseProductUSA-in-0:
           destination: queue.parseProductUSA-in.messages
         parseProductUSA-out-0:
-          destination: queue.parseProductUSA-out.messages
+          destination: queue.orders.messages
+        sendCustomerData-out-0:
+          destination: queue.customers.messages
+        parseItem-in-0:
+          destination: queue.items.messages
 logging:
   level:
     root: info
