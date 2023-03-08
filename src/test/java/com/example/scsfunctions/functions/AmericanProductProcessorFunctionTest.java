@@ -4,6 +4,7 @@ import com.example.scsfunctions.dto.Nationality;
 import com.example.scsfunctions.dto.Order;
 import com.example.scsfunctions.dto.Product;
 import com.example.scsfunctions.services.ProductService;
+import io.micrometer.observation.ObservationRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -14,11 +15,18 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith({MockitoExtension.class, OutputCaptureExtension.class})
 class AmericanProductProcessorFunctionTest {
   @Mock
   ProductService productService;
+
+  @Mock
+  ObservationRegistry registry;
+
+  @Mock
+  ObservationRegistry.ObservationConfig observationConfig;
 
   @Test
   void apply(CapturedOutput output) {
@@ -31,8 +39,12 @@ class AmericanProductProcessorFunctionTest {
 
     Mockito.when(productService.processProduct(product)).thenReturn(order);
 
-    assertEquals(new AmericanProductProcessorFunction(productService).apply(product), order);
+    Mockito.when(registry.observationConfig()).thenReturn(observationConfig);
+
+    assertEquals(new AmericanProductProcessorFunction(productService, registry).apply(product), order);
     assertThat(output.getAll()).contains("Start parseProductUSA - product = Product(name=Product1, origin=USA)");
+
+    verify(productService).processProduct(product);
 
   }
 }
