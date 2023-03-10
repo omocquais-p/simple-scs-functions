@@ -24,7 +24,7 @@ public class CustomerProcessor {
 
       Product product = customerService.process(customer);
 
-      switch (customer.getNationality()) {
+      switch (customer.nationality()) {
         case FRA -> {
           return MessageBuilder.withPayload(product).setHeader("spring.cloud.stream.sendto.destination", BINDING_NAME_PARSE_PRODUCT_FRA_IN).build();
         }

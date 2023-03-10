@@ -11,8 +11,6 @@ public class CustomerService {
 
   public Product process(Customer customer) {
     log.info("process customer:" + customer);
-    Product product = new Product();
-    product.setName(customer.getName());
-    return product;
+    return new Product(customer.name(), "sample-origin");
   }
 }

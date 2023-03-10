@@ -30,20 +30,15 @@ class AmericanProductProcessorFunctionTest {
 
   @Test
   void apply(CapturedOutput output) {
-    Product product = new Product();
-    product.setOrigin(Nationality.USA.toString());
-    product.setName("Product1");
-
-    Order order = new Order();
-    order.setName("order1");
+    var product = new Product("Product1", Nationality.USA.toString());
+    var order = new Order("order1");
 
     Mockito.when(productService.processProduct(product)).thenReturn(order);
 
     Mockito.when(registry.observationConfig()).thenReturn(observationConfig);
 
     assertEquals(new AmericanProductProcessorFunction(productService, registry).apply(product), order);
-    assertThat(output.getAll()).contains("Start parseProductUSA - product = Product(name=Product1, origin=USA)");
-
+    assertThat(output.getAll()).contains("Start parseProductUSA - product = Product[name=Product1, origin=USA]");
     verify(productService).processProduct(product);
 
   }

@@ -16,10 +16,7 @@ public class OrderProcessor {
   public Function<Order, Item> parseOrder() {
     return order -> {
       log.info("---- Start parseOrder - order = {}", order);
-      Item item = new Item();
-      item.setName(order.getName());
-      item.setPrice(100);
-      return item;
+      return new Item(order.name(), 100);
     };
   }
 }

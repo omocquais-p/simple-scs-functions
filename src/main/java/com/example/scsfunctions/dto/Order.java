@@ -1,8 +1,5 @@
 package com.example.scsfunctions.dto;
 
-import lombok.Data;
+public record Order(String name) {
 
-@Data
-public class Order {
-  String name;
 }

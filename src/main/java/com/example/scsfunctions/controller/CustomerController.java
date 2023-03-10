@@ -27,9 +27,9 @@ public class CustomerController {
 
     log.info("batchCommand = " + batchCommand);
 
-    var customer = new Customer();
-    customer.setName(batchCommand.name());
-    customer.setNationality(Nationality.valueOf(batchCommand.nationality()));
+    var customer = new Customer(batchCommand.name(),
+            batchCommand.name(),
+            Nationality.valueOf(batchCommand.nationality()));
 
     streamBridge.send("customer", customer);
 

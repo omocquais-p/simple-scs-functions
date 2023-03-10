@@ -46,57 +46,44 @@ class ScsFunctionsApplicationTests {
   @Test
   void processFrenchCustomer() throws IOException {
 
-    Customer customer = new Customer();
-    customer.setFirstName("Olivier");
-    customer.setName("Dupond");
-    customer.setNationality(Nationality.FRA);
-
+    Customer customer = new Customer("Dupond", "Olivier", Nationality.FRA);
     inputDestination.send(MessageBuilder.withPayload(customer).build(), BINDING_NAME_PROCESS_CUSTOMER_IN);
 
     Product product = new ObjectMapper().readValue(outputDestination.receive(100, ScsFunctionsApplicationTests.BINDING_NAME_PARSE_PRODUCT_FRA_OUT).getPayload(), Product.class);
     Assertions.assertNotNull(product);
-    Assertions.assertEquals(customer.getName(), product.getName());
+    Assertions.assertEquals(customer.name(), product.name());
   }
 
   @DisplayName("Given a customer with an american nationality, it must be processed by the parseProductUSA function")
   @Test
   void processAmericanCustomer() throws IOException {
 
-    Customer customer = new Customer();
-    customer.setFirstName("Olivier");
-    customer.setName("Smith");
-    customer.setNationality(Nationality.USA);
-
+    Customer customer = new Customer("Smith", "Olivier", Nationality.USA);
     inputDestination.send(MessageBuilder.withPayload(customer).build(), BINDING_NAME_PROCESS_CUSTOMER_IN);
 
     Product product = new ObjectMapper().readValue(outputDestination.receive(100, BINDING_NAME_PARSE_PRODUCT_USA_OUT).getPayload(), Product.class);
     Assertions.assertNotNull(product);
-    Assertions.assertEquals(customer.getName(), product.getName());
+    Assertions.assertEquals(customer.name(), product.name());
   }
 
   @DisplayName("Given a product published, it must be processed by the parseProduct function")
   @Test
   void parseProduct() throws IOException {
 
-    Product product = new Product();
-    product.setName("Bob");
-    product.setOrigin("web");
-
+    Product product = new Product("Bob", "web");
     Message<Product> message = MessageBuilder.withPayload(product).build();
 
     inputDestination.send(message, "queue.parseProduct-in.messages");
 
     Order order = new ObjectMapper().readValue(outputDestination.receive(100, "queue.parseProduct-out.messages").getPayload(), Order.class);
     Assertions.assertNotNull(order);
-    Assertions.assertEquals(product.getName(), order.getName());
+    Assertions.assertEquals(product.name(), order.name());
   }
 
   @Test
   void parseProductFRA() throws IOException {
 
-    Product product = new Product();
-    product.setName("Bob");
-    product.setOrigin("web");
+    Product product = new Product("Bob", "web");
 
     Message<Product> message = MessageBuilder.withPayload(product).build();
 
@@ -104,15 +91,13 @@ class ScsFunctionsApplicationTests {
 
     Order order = new ObjectMapper().readValue(outputDestination.receive(100, BINDING_NAME_PARSE_PRODUCT_FRA_OUT).getPayload(), Order.class);
     Assertions.assertNotNull(order);
-    Assertions.assertEquals(product.getName(), order.getName());
+    Assertions.assertEquals(product.name(), order.name());
   }
 
   @Test
   void parseProductUSA() throws IOException {
 
-    Product product = new Product();
-    product.setName("Bob");
-    product.setOrigin("web");
+    Product product = new Product("Bob", "web");
 
     Message<Product> message = MessageBuilder.withPayload(product).build();
 
@@ -120,32 +105,28 @@ class ScsFunctionsApplicationTests {
 
     Order order = new ObjectMapper().readValue(outputDestination.receive(100, BINDING_NAME_PARSE_PRODUCT_USA_OUT).getPayload(), Order.class);
     Assertions.assertNotNull(order);
-    Assertions.assertEquals(product.getName(), order.getName());
+    Assertions.assertEquals(product.name(), order.name());
   }
 
   @Test
   void parseOrder() throws IOException {
 
-    Order order = new Order();
-    order.setName("order1");
+    Order order = new Order("order1");
 
     Message<Order> message = MessageBuilder.withPayload(order).build();
     inputDestination.send(message, "queue.parseOrder-in.messages");
 
     Item item = new ObjectMapper().readValue(outputDestination.receive(100, "queue.parseOrder-out.messages").getPayload(), Item.class);
     Assertions.assertNotNull(item);
-    Assertions.assertEquals(item.getName(), order.getName());
-    Assertions.assertEquals(item.getPrice(), 100);
+    Assertions.assertEquals(item.name(), order.name());
+    Assertions.assertEquals(item.price(), 100);
   }
 
   @Test
   void parseItem() {
     doNothing().when(itemService).processItem(Mockito.any(Item.class));
 
-    Item item = new Item();
-    item.setPrice(100);
-    item.setName("item1");
-
+    Item item = new Item("item1", 100);
     Message<Item> message = MessageBuilder.withPayload(item).build();
     inputDestination.send(message, "queue.parseItem-in.messages");
     verify(itemService).processItem(any(Item.class));

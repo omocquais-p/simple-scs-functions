@@ -1,9 +1,5 @@
 package com.example.scsfunctions.dto;
 
-import lombok.Data;
+public record Item(String name, Integer price) {
 
-@Data
-public class Item {
-  private String name;
-  private Integer price;
 }

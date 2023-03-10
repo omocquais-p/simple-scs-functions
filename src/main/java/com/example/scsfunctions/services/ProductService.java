@@ -11,9 +11,7 @@ public class ProductService {
 
   public Order processProduct(Product product) {
     log.info("start processProduct:" + product);
-    Order order = new Order();
-    order.setName(product.getName());
-    return order;
+    return new Order(product.name());
 
   }
 }

@@ -1,10 +1,7 @@
 package com.example.scsfunctions.dto;
 
-import lombok.Data;
+public record Customer(String name,
+                       String firstName,
+                       Nationality nationality) {
 
-@Data
-public class Customer {
-  String name;
-  String firstName;
-  Nationality nationality;
 }
