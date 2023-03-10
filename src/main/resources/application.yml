@@ -5,7 +5,6 @@ spring:
     stream:
       function:
         bindings:
-          controller-out-0: customer
           processCustomer-in-0: customer
           processCustomer-out-0: customer-output
       bindings:
