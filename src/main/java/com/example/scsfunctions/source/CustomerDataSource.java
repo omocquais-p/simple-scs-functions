@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
@@ -17,14 +18,11 @@ import java.util.function.Supplier;
 public class CustomerDataSource {
 
   @Bean
-  @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.SECONDS)
+  //@Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
   public Supplier<Customer> sendCustomerData() {
     return () -> {
-
       var customer = new Customer();
-      UUID uuid = UUID.randomUUID();
-
-      customer.setName("Bob-" + uuid);
+      customer.setName("Bob-" + LocalDateTime.now() + "-" + UUID.randomUUID());
       if (Instant.now().toEpochMilli() % 2 == 0) {
         customer.setNationality(Nationality.FRA);
       } else {

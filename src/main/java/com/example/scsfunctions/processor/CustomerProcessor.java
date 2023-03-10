@@ -35,6 +35,7 @@ public class CustomerProcessor {
       }
 
       log.info("---- End processFile - customer = {}", customer);
+
       throw new IllegalArgumentException("No Processor configured for this nationality");
     };
   }
