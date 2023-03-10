@@ -16,7 +16,6 @@ import java.util.function.Supplier;
 public class CustomerDataSource {
 
   @Bean
-  //@Scheduled(fixedRate = 1, timeUnit = TimeUnit.MINUTES)
   public Supplier<Customer> sendCustomerData() {
     return () -> {
       if (Instant.now().toEpochMilli() % 2 == 0) {

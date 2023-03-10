@@ -1,7 +1,7 @@
 spring:
   cloud:
     function:
-      definition: processCustomer;parseProductFRA;parseProductUSA;parseOrder;parseItem
+      definition: sendCustomerData;processCustomer;parseProductFRA;parseProductUSA;parseOrder;parseItem
     stream:
       function:
         bindings:
@@ -26,8 +26,11 @@ spring:
           destination: queue.items.messages
         parseItem-in-0:
           destination: queue.items.messages
-#        sendCustomerData-out-0:
-#          destination: queue.customer.messages
+        sendCustomerData-out-0:
+          destination: queue.customer.messages
+  integration:
+    poller:
+      fixed-delay: 5000
 logging:
   level:
     root: info
