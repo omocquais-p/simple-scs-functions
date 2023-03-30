@@ -7,10 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import org.springframework.cloud.stream.binder.test.InputDestination;
 import org.springframework.cloud.stream.binder.test.OutputDestination;
 import org.springframework.cloud.stream.binder.test.TestChannelBinderConfiguration;
@@ -20,6 +23,7 @@ import org.springframework.messaging.support.MessageBuilder;
 
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
@@ -27,6 +31,7 @@ import static org.mockito.Mockito.verify;
 @Slf4j
 @SpringBootTest
 @Import(TestChannelBinderConfiguration.class)
+@ExtendWith(OutputCaptureExtension.class)
 class ScsFunctionsApplicationTests {
 
   public static final String BINDING_NAME_PROCESS_CUSTOMER_IN = "queue.processCustomer-in.messages";
@@ -64,6 +69,15 @@ class ScsFunctionsApplicationTests {
     Product product = new ObjectMapper().readValue(outputDestination.receive(100, BINDING_NAME_PARSE_PRODUCT_USA_OUT).getPayload(), Product.class);
     Assertions.assertNotNull(product);
     Assertions.assertEquals(customer.name(), product.name());
+  }
+
+
+  @DisplayName("Given a customer without a nationality, it should throw an exception")
+  @Test
+  public void processCustomerWithoutNationality(CapturedOutput capturedOutput) {
+    Customer customer = new Customer("Smith", "Olivier", null);
+    inputDestination.send(MessageBuilder.withPayload(customer).build(), BINDING_NAME_PROCESS_CUSTOMER_IN);
+    assertTrue(capturedOutput.getAll().contains("a nationality is required"));
   }
 
   @DisplayName("Given a product published, it must be processed by the parseProduct function")

@@ -5,6 +5,7 @@ import com.example.scsfunctions.dto.Order;
 import com.example.scsfunctions.dto.Product;
 import com.example.scsfunctions.services.ProductService;
 import io.micrometer.observation.ObservationRegistry;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -41,5 +42,12 @@ class AmericanProductProcessorFunctionTest {
     assertThat(output.getAll()).contains("Start parseProductUSA - product = Product[name=Product1, origin=USA]");
     verify(productService).processProduct(product);
 
+  }
+
+  @DisplayName("Given a product wthout a nationality, It should throw an exception")
+  @Test
+  public void productWithoutNationality(){
+    var product = new Product("Product1", null);
+    var order = new Order("order1");
   }
 }

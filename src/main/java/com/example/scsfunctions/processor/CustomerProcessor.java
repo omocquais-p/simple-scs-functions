@@ -24,6 +24,9 @@ public class CustomerProcessor {
 
       Product product = customerService.process(customer);
 
+      if (customer.nationality() == null) {
+        throw new IllegalArgumentException("a nationality is required");
+      }
       switch (customer.nationality()) {
         case FRA -> {
           return MessageBuilder.withPayload(product).setHeader("spring.cloud.stream.sendto.destination", BINDING_NAME_PARSE_PRODUCT_FRA_IN).build();

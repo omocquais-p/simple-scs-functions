@@ -6,6 +6,7 @@ spring:
       bindings:
         processCustomer-in-0:
           destination: queue.processCustomer-in.messages
+          error-handler-definition: myErrorHandler
         processCustomer-out-0:
           destination: queue.processCustomer-out.messages
         parseProduct-in-0:

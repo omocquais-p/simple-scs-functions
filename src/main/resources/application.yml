@@ -10,6 +10,7 @@ spring:
       bindings:
         customer:
           destination: queue.customer.messages
+          error-handler-definition: myErrorHandler
         customer-output:
           destination: queue.products.messages
         parseProductFRA-in-0:
